@@ -1,0 +1,28 @@
+---
+- name: Write VM metadata to var log vm info
+  shell: |
+    if [ -e /etc/yum.repos.d/oracle-linux-ol7.repo.osms-backup ]
+    then
+        mv /etc/yum.repos.d/oracle-linux-ol7.repo.osms-backup /etc/yum.repos.d/oracle-linux-ol7.repo
+    else
+        echo "File Doesn't exist"
+    fi
+
+- name: Install Redhat | Add yum repository
+  yum_repository:
+    name: fluent-bit
+    baseurl: http://packages.fluentbit.io/centos/7/$basearch/
+    gpgcheck: 1
+    gpgkey: http://packages.fluentbit.io/fluentbit.key
+    description: Fluent bit repo
+    enabled: 1
+    
+- name: Add Server repository
+  yum_repository:
+    name: 'osquery-s3-rpm'
+    description: 'name=osquery RPM repository - x86_64'
+    baseurl: 'https://s3.amazonaws.com/osquery-packages/rpm/$basearch/'
+    gpgkey: 'https://pkg.osquery.io/rpm/GPG'
+    gpgcheck: yes
+    repo_gpgcheck: no
+    state: present

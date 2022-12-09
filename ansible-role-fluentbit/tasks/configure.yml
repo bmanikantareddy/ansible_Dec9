@@ -1,0 +1,138 @@
+---
+- name: Configure | Source td-agent-bit main conf
+  template:
+    src: fluent-bit.conf
+    dest: /etc/fluent-bit/fluent-bit.conf
+    mode: 0644
+
+- name: Configure | Source osquery main conf
+  template:
+    src: osquery.conf
+    dest: /etc/osquery/osquery.conf
+    mode: 0644
+  notify: Restart Osquery
+
+- name: check for vminfo exists
+  stat:
+    path: /var/log/vminfo
+  register: vminfo_exists  
+
+- name: Extract meta data from OCI
+  block: 
+  # load json content from URL.
+  - name: Download JSON content play
+    uri:
+      url: http://169.254.169.254/opc/v1/instance/
+      return_content: yes
+    register: result
+
+  - name: save the Json data to vminfo as a Fact
+    set_fact:
+      vminfo: "{{ result.json }}"
+
+  - name: copying vminfo to file
+    copy: 
+      content: "{{ result.json }}"
+      dest: /var/log/vminfo    
+
+    # load json content from URL.
+  - name: Download JSON content play
+    uri:
+      url: http://169.254.169.254/opc/v1/vnics/
+      return_content: yes
+    register: result 
+
+  - name: save the Json data to vcninfo as a Fact
+    set_fact:
+      vcninfo: "{{ result.json }}"
+
+  - name: Retrieve the fileds from json data
+    set_fact:
+      availabilityDomain: "{{ vminfo | json_query('availabilityDomain') }}"
+      compartmentId: "{{ vminfo | json_query('compartmentId') }}"
+      faultDomain: "{{ vminfo | json_query('faultDomain') }}"
+      host_ip: "{{ vcninfo | json_query('[0].privateIp') }}"
+      hostname: "{{ vminfo | json_query('hostname') }}"
+      instanceId: "{{ vminfo | json_query('id') }}"
+      oci_region: "{{ vminfo | json_query('canonicalRegionName') }}"
+      subnet_cidr: "{{ vcninfo | json_query('[0].subnetCidrBlock') }}"
+      vm_shape: "{{ vminfo | json_query('shape') }}"
+      vnic_id: "{{ vcninfo | json_query('[0].vnicId') }}"
+      image_id: "{{ vminfo | json_query('image') }}"
+      logstashfqdn: "{{logstashhost | default('127.0.0.1')}}:{{logstashport | default('5044')}}"
+  
+  # printing reterived fileds to stdout.
+  - name: Print out Vminfo
+    debug:
+      msg: 
+      - "availabilityDomain: {{availabilityDomain}}"
+      - "compartmentId: {{compartmentId}}"
+      - "faultDomain: {{faultDomain}}"
+      - "host_ip: {{host_ip}}"
+      - "hostname: {{hostname}}"
+      - "instanceId: {{instanceId}}"
+      - "oci_region: {{oci_region}}"
+      - "subnet_cidr: {{subnet_cidr}}"
+      - "vm_shape: {{vm_shape}}"
+      - "vnic_id: {{vnic_id}}"
+      - "image_id: {{image_id}}"
+
+  - name: adding meta data to /etc/fluent-bit/fluent-bit.conf
+    replace:
+      path: /etc/fluent-bit/fluent-bit.conf
+      regexp: "{{ item.match_str }}"
+      replace: "{{ item.replace_str }}"
+    with_items:
+    - {match_str: "availabilityDomain" , replace_str: "availabilityDomain {{availabilityDomain}}"}
+    - {match_str: "compartmentId" , replace_str: "compartmentId {{compartmentId}}"}  
+    - {match_str: "instanceId" , replace_str: "instanceId {{instanceId}}"}       
+    - {match_str: "vm_shape" , replace_str: "vm_shape {{vm_shape}}"}  
+    - {match_str: "host_ip" , replace_str: "host_ip {{host_ip}}"}  
+    - {match_str: "oci_region" , replace_str: "oci_region {{oci_region}}"}  
+    - {match_str: "faultDomain" , replace_str: "faultDomain {{faultDomain}}"}  
+    - {match_str: "imageId" , replace_str: "imageId {{image_id}}"}  
+    - {match_str: "vnic_id" , replace_str: "vnic_id {{vnic_id}}"}  
+    - {match_str: "subnet_cidr" , replace_str: "subnet_cidr {{subnet_cidr}}"}  
+    - {match_str: "hostname" , replace_str: "hostname {{hostname}}"} 
+    notify: Restart Fluentbit  
+
+  # for Oracle linux version 6 & 7    
+  - name: Check whether /etc/rsyslog.conf:6,7 contains "10.5.236.52:514"
+    command: grep -E "*.* @@10.5.236.52:514|*.* @10.5.236.52:514|#*.* @@10.5.236.52:514" /etc/rsyslog.conf
+    register: checkmyconf
+    check_mode: no
+    ignore_errors: yes
+    changed_when: no
+    when: ansible_distribution_major_version < '8'
+  
+  # for Oracle linux version >= 8
+  - name: Check whether /etc/rsyslog.conf:8 contains "10.5.236.52:514"
+    command: grep -E "Target=\"10.5.236.52\"" /etc/rsyslog.conf
+    register: checkmyconf
+    check_mode: no
+    ignore_errors: yes
+    changed_when: no
+    when: ansible_distribution_major_version >= '8'
+
+   # for Oracle linux version 6 & 7  
+  - name: replace remote host in /etc/rsyslog.conf:6,7
+    shell: "sed -i '/. @@remote-host:514/ a *.*  @@10.5.236.52:514' /etc/rsyslog.conf"
+    notify: Restart rsyslog
+    when: checkmyconf.rc == 1 and ansible_distribution_major_version < '8'
+
+  # for Oracle linux version >= 8
+  - name: replace remote host in /etc/rsyslog.conf:8
+    ansible.builtin.lineinfile:
+      path: /etc/rsyslog.conf
+      regexp: '#Target="remote_host"'
+      line: Target="10.5.236.52" Port="514" Protocol="tcp"
+    notify: Restart rsyslog
+    when: checkmyconf.rc == 1 and ansible_distribution_major_version >= '8'
+
+  - name: Writing to forwarded-logs.log
+    shell: |
+      [ ! -d "mkdir /var/log/rsyslog" ] && mkdir /var/log/rsyslog
+      [ ! -f /var/log/rsyslog/forwarded-logs.log ] && touch /var/log/rsyslog/forwarded-logs.log
+      echo 'SIEM rsyslog is configured' >> /var/log/rsyslog/forwarded-logs.log
+    notify: Restart rsyslog
+    when: checkmyconf.rc == 0

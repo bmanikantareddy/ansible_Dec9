@@ -1,0 +1,23 @@
+---
+# handlers file for ansible-role-fluentbit
+
+- name: Restart Fluentbit
+  service:
+    name: fluent-bit
+    enabled: true
+    state: restarted
+  become: true
+
+- name: Restart Osquery
+  service:
+    name: osqueryd
+    enabled: true
+    state: restarted
+  become: true
+
+- name: Restart rsyslog
+  service:
+    name: rsyslog
+    enabled: true
+    state: restarted
+  become: true

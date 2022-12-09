@@ -1,0 +1,62 @@
+---
+# tasks file for ansible-role-fluentbit
+
+- name: Install Fluentbit
+  include_tasks: 'add-pkg-repo.yml'
+  tags: ['install']
+
+- name: Install td-agent-bit.rpm
+  # environment:
+  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  yum:
+    name: fluent-bit-{{fluent_bit_version}}
+    state: present
+
+- name: Download osquery rpm
+  # environment:
+  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  get_url:
+    url: https://pkg.osquery.io/rpm/osquery-{{osquery_version}}.linux.x86_64.rpm
+    dest: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
+
+- name: Ensure latest version of packages is installed.
+  # environment:
+  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  yum:
+    name: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
+    state: present
+    disable_gpg_check: true
+  become: yes
+
+- name: Ansible check directory.
+  stat:
+    path: /etc/osquery
+  register: osquery_folder
+
+# workaround for latest osquery package
+- name: Creates /etc/osquery directory
+  file:
+    path: /etc/osquery
+    state: directory
+  when: osquery_folder.stat.exists == false   
+
+- name: Ensure td-agent-bit Service is enabled and started
+  become: true
+  service:
+    name: fluent-bit
+    enabled: yes 
+    state: started
+  notify: Restart Fluentbit
+
+- name: Ensure osquery Service is enabled and started Osquery
+  become: true
+  service:
+    name: osqueryd
+    enabled: yes
+    state: started
+  notify: Restart Osquery
+  
+- import_tasks: configure.yml

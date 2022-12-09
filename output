@@ -1,0 +1,227 @@
+[opc@ansible-host ansible-ol7_fluentbit]$ ansible-playbook -i inventory cleanup.yml
+
+PLAY [test play] ***************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************************************************************************************************************
+[WARNING]: Platform linux on host 150.136.212.208 is using the discovered Python interpreter at /usr/bin/python, but future installation of another Python interpreter could change this. See
+https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+ok: [150.136.212.208]
+
+TASK [cleanup All installed packages] ******************************************************************************************************************************************************************************
+[DEPRECATION WARNING]: Invoking "yum" only once while using a loop via squash_actions is deprecated. Instead of using a loop to supply multiple items and specifying `name: "{{item}}"`, please use `name:
+['osqueryd', 'jq', 'filebeat', 'td-agent-bit', 'fluent-bit']` and remove the loop. This feature will be removed in version 2.11. Deprecation warnings can be disabled by setting deprecation_warnings=False in
+ansible.cfg.
+
+changed: [150.136.212.208] => (item=[u'osqueryd', u'jq', u'filebeat', u'td-agent-bit', u'fluent-bit'])
+
+TASK [Remove all configuration files] ******************************************************************************************************************************************************************************
+ok: [150.136.212.208] => (item=/etc/filebeat/)
+ok: [150.136.212.208] => (item=/etc/fluent-bit/fluent-bit.conf)
+ok: [150.136.212.208] => (item=/etc/td-agent-bit/)
+ok: [150.136.212.208] => (item=/etc/osquery)
+ok: [150.136.212.208] => (item=/usr/bin/yq)
+ok: [150.136.212.208] => (item=/var/log/vminfo)
+
+PLAY RECAP *********************************************************************************************************************************************************************************************************
+150.136.212.208            : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+[opc@ansible-host ansible-ol7_fluentbit]$ ansible-playbook -i inventory fluentBit.yml | tee -a output
+PLAY [all] *********************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [include_role : ansible-role-fluentbit] ***********************************************************************************************************************************************************************
+
+TASK [ansible-role-fluentbit : Install Fluentbit] ******************************************************************************************************************************************************************
+included: /home/opc/ansible/ansible-ol7_fluentbit/ansible-role-fluentbit/tasks/add-pkg-repo.yml for 150.136.212.208
+
+TASK [ansible-role-fluentbit : Write VM metadata to var log vm info] ***********************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Install Redhat | Add yum repository] ************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Add Server repository] **************************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Install td-agent-bit.rpm] ***********************************************************************************************************************************************************
+fatal: [150.136.212.208]: FAILED! => {"changed": false, "msg": "Failed to download metadata for repo 'fluent-bit': Cannot download repomd.xml: Curl error (5): Couldn't resolve proxy name for http://packages.fluentbit.io/centos/7/x86_64/repodata/repomd.xml [Could not resolve proxy: proxy-1.proxy.oal.oraclevcn.com]", "rc": 1, "results": []}
+
+PLAY RECAP *********************************************************************************************************************************************************************************************************
+150.136.212.208            : ok=5    changed=3    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+
+[opc@ansible-host ansible-ol7_fluentbit]$ ansible-playbook -i inventory fluentBit.yml | tee -a output
+PLAY [all] *********************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [include_role : ansible-role-fluentbit] ***********************************************************************************************************************************************************************
+
+TASK [ansible-role-fluentbit : Install Fluentbit] ******************************************************************************************************************************************************************
+included: /home/opc/ansible/ansible-ol7_fluentbit/ansible-role-fluentbit/tasks/add-pkg-repo.yml for 150.136.212.208
+
+TASK [ansible-role-fluentbit : Write VM metadata to var log vm info] ***********************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Install Redhat | Add yum repository] ************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Add Server repository] **************************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Install td-agent-bit.rpm] ***********************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Download osquery rpm] ***************************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Ensure latest version of packages is installed.] ************************************************************************************************************************************
+fatal: [150.136.212.208]: FAILED! => {"changed": false, "msg": "Failed to validate GPG signature for osquery-4.9.0-1.linux.x86_64"}
+
+PLAY RECAP *********************************************************************************************************************************************************************************************************
+150.136.212.208            : ok=7    changed=3    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+
+[opc@ansible-host ansible-ol7_fluentbit]$ ansible-playbook -i inventory cleanup.yml
+
+PLAY [test play] ***************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************************************************************************************************************
+[WARNING]: Platform linux on host 150.136.212.208 is using the discovered Python interpreter at /usr/bin/python, but future installation of another Python interpreter could change this. See
+https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+ok: [150.136.212.208]
+
+TASK [cleanup All installed packages] ******************************************************************************************************************************************************************************
+[DEPRECATION WARNING]: Invoking "yum" only once while using a loop via squash_actions is deprecated. Instead of using a loop to supply multiple items and specifying `name: "{{item}}"`, please use `name:
+['osqueryd', 'jq', 'filebeat', 'td-agent-bit', 'fluent-bit']` and remove the loop. This feature will be removed in version 2.11. Deprecation warnings can be disabled by setting deprecation_warnings=False in
+ansible.cfg.
+changed: [150.136.212.208] => (item=[u'osqueryd', u'jq', u'filebeat', u'td-agent-bit', u'fluent-bit'])
+
+TASK [Remove all configuration files] ******************************************************************************************************************************************************************************
+ok: [150.136.212.208] => (item=/etc/filebeat/)
+ok: [150.136.212.208] => (item=/etc/fluent-bit/fluent-bit.conf)
+ok: [150.136.212.208] => (item=/etc/td-agent-bit/)
+ok: [150.136.212.208] => (item=/etc/osquery)
+ok: [150.136.212.208] => (item=/usr/bin/yq)
+ok: [150.136.212.208] => (item=/var/log/vminfo)
+
+PLAY RECAP *********************************************************************************************************************************************************************************************************
+150.136.212.208            : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+PLAY [all] *********************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [include_role : ansible-role-fluentbit] ***********************************************************************************************************************************************************************
+
+TASK [ansible-role-fluentbit : Install Fluentbit] ******************************************************************************************************************************************************************
+included: /home/opc/ansible/ansible-ol7_fluentbit/ansible-role-fluentbit/tasks/add-pkg-repo.yml for 150.136.212.208
+
+TASK [ansible-role-fluentbit : Write VM metadata to var log vm info] ***********************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Install Redhat | Add yum repository] ************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Add Server repository] **************************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Install td-agent-bit.rpm] ***********************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Download osquery rpm] ***************************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Ensure latest version of packages is installed.] ************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Ansible check directory.] ***********************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Creates /etc/osquery directory] *****************************************************************************************************************************************************
+skipping: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Ensure td-agent-bit Service is enabled and started] *********************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Ensure osquery Service is enabled and started Osquery] ******************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Configure | Source td-agent-bit main conf] ******************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Configure | Source osquery main conf] ***********************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : check for vminfo exists] ************************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Download JSON content play] *********************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : save the Json data to vminfo as a Fact] *********************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : copying vminfo to file] *************************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Download JSON content play] *********************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : save the Json data to vcninfo as a Fact] ********************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Retrieve the fileds from json data] *************************************************************************************************************************************************
+ok: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Print out Vminfo] *******************************************************************************************************************************************************************
+ok: [150.136.212.208] => {
+    "msg": [
+        "availabilityDomain: SWli:US-ASHBURN-AD-1", 
+        "compartmentId: ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq", 
+        "faultDomain: FAULT-DOMAIN-1", 
+        "host_ip: 10.0.0.161", 
+        "hostname: oraclelinux8", 
+        "instanceId: ocid1.instance.oc1.iad.anuwcljrzvensjyc7e6fpj2vnlqnwummw7ys3qpfwh3yf26bkttlfsptw7hq", 
+        "oci_region: us-ashburn-1", 
+        "subnet_cidr: 10.0.0.0/24", 
+        "vm_shape: VM.Standard.E4.Flex", 
+        "vnic_id: ocid1.vnic.oc1.iad.abuwcljr4xz2ytbkittqevq5gvdo7tifobahzogwzycfcsfmghfkohds6dya", 
+        "image_id: ocid1.image.oc1.iad.aaaaaaaak6w63p4ddsxlh2hgqh2vycoivsdevwy2utwsqjxwcvsj4vfstlqa"
+    ]
+}
+
+TASK [ansible-role-fluentbit : adding meta data to /etc/fluent-bit/fluent-bit.conf] ********************************************************************************************************************************
+changed: [150.136.212.208] => (item={u'replace_str': u'availabilityDomain SWli:US-ASHBURN-AD-1', u'match_str': u'availabilityDomain'})
+changed: [150.136.212.208] => (item={u'replace_str': u'compartmentId ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq', u'match_str': u'compartmentId'})
+changed: [150.136.212.208] => (item={u'replace_str': u'instanceId ocid1.instance.oc1.iad.anuwcljrzvensjyc7e6fpj2vnlqnwummw7ys3qpfwh3yf26bkttlfsptw7hq', u'match_str': u'instanceId'})
+changed: [150.136.212.208] => (item={u'replace_str': u'vm_shape VM.Standard.E4.Flex', u'match_str': u'vm_shape'})
+changed: [150.136.212.208] => (item={u'replace_str': u'host_ip 10.0.0.161', u'match_str': u'host_ip'})
+changed: [150.136.212.208] => (item={u'replace_str': u'oci_region us-ashburn-1', u'match_str': u'oci_region'})
+changed: [150.136.212.208] => (item={u'replace_str': u'faultDomain FAULT-DOMAIN-1', u'match_str': u'faultDomain'})
+changed: [150.136.212.208] => (item={u'replace_str': u'imageId ocid1.image.oc1.iad.aaaaaaaak6w63p4ddsxlh2hgqh2vycoivsdevwy2utwsqjxwcvsj4vfstlqa', u'match_str': u'imageId'})
+changed: [150.136.212.208] => (item={u'replace_str': u'vnic_id ocid1.vnic.oc1.iad.abuwcljr4xz2ytbkittqevq5gvdo7tifobahzogwzycfcsfmghfkohds6dya', u'match_str': u'vnic_id'})
+changed: [150.136.212.208] => (item={u'replace_str': u'subnet_cidr 10.0.0.0/24', u'match_str': u'subnet_cidr'})
+changed: [150.136.212.208] => (item={u'replace_str': u'hostname oraclelinux8', u'match_str': u'hostname'})
+
+TASK [ansible-role-fluentbit : Check whether /etc/rsyslog.conf contains "10.5.236.52:514"] *************************************************************************************************************************
+fatal: [150.136.212.208]: FAILED! => {"changed": false, "cmd": ["grep", "-E", "*.* @@10.5.236.52:514|*.* @10.5.236.514|#*.* @@10.5.236.52:514", "/etc/rsyslog.conf"], "delta": "0:00:00.002127", "end": "2022-12-09 10:20:24.747844", "msg": "non-zero return code", "rc": 1, "start": "2022-12-09 10:20:24.745717", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [ansible-role-fluentbit : replace remote host in /etc/rsyslog.conf] *******************************************************************************************************************************************
+changed: [150.136.212.208]
+
+RUNNING HANDLER [ansible-role-fluentbit : Restart Fluentbit] *******************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+RUNNING HANDLER [ansible-role-fluentbit : Restart Osquery] *********************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+RUNNING HANDLER [ansible-role-fluentbit : Restart rsyslog] *********************************************************************************************************************************************************
+changed: [150.136.212.208]
+
+PLAY RECAP *********************************************************************************************************************************************************************************************************
+150.136.212.208            : ok=27   changed=13   unreachable=0    failed=0    skipped=1    rescued=0    ignored=1   
+

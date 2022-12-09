@@ -1,0 +1,38 @@
+---
+
+- name: test play
+  hosts: all
+  become: yes
+  vars:
+    osquery_version: "4.9.0"
+    filebeat_version: "7.17.0"
+  tasks:
+  - name: cleanup All installed packages 
+    yum:
+      name: "{{item}}"
+      state: absent
+      update_cache: yes
+    ignore_errors: yes
+    with_items:
+    - osqueryd
+    - jq
+    - filebeat
+    - td-agent-bit
+    - fluent-bit
+  
+  - name: Remove all configuration files
+    ansible.builtin.file:
+      path: "{{item}}" 
+      state: absent
+    with_items: 
+    - /etc/filebeat/
+    - /etc/fluent-bit/fluent-bit.conf
+    - /etc/td-agent-bit/
+    - /etc/osquery
+    - /usr/bin/yq
+    - /var/log/vminfo 
+
+
+
+  
+    
