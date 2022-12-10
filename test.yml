@@ -26,10 +26,20 @@
 
 
 - name: localhost test
-  hosts: localhost
+  hosts: all
   tasks: 
-  - name: test
-    ansible.builtin.lineinfile:
-      path: /home/opc/ansible/rsyslog
-      regexp: '#Target="remote_host"'
-      line: Target="10.5.236.52" Port="514" Protocol="tcp"
+  # - name: test
+  #   ansible.builtin.lineinfile:
+  #     path: /home/opc/ansible/rsyslog
+  #     regexp: '#Target="remote_host"'
+  #     line: Target="10.5.236.52" Port="514" Protocol="tcp"
+  # - name: yum_command 
+  #   yum:
+  #     list=installed
+  #   register: yum_packages
+  - name: yum_command 
+    shell: yum list installed fluent-bit
+    register: yum_fluent_bit
+
+  - debug:
+      var: yum_fluent_bit

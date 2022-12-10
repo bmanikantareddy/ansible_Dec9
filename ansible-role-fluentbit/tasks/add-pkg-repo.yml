@@ -11,12 +11,13 @@
 - name: Install Redhat | Add yum repository
   yum_repository:
     name: fluent-bit
-    baseurl: http://packages.fluentbit.io/centos/7/$basearch/
+    baseurl: https://packages.fluentbit.io/centos/{{ansible_distribution_major_version}}/$basearch/
     gpgcheck: 1
-    gpgkey: http://packages.fluentbit.io/fluentbit.key
+    gpgkey: https://packages.fluentbit.io/fluentbit.key
     description: Fluent bit repo
     enabled: 1
-    
+  when: ansible_distribution_major_version >= '7'  
+      
 - name: Add Server repository
   yum_repository:
     name: 'osquery-s3-rpm'
