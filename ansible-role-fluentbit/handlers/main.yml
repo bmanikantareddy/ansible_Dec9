@@ -8,6 +8,13 @@
     state: restarted
   become: true
 
+- name: Restart td-agent-bit
+  service:
+    name: td-agent-bit
+    enabled: true
+    state: restarted
+  become: true
+
 - name: Restart Osquery
   service:
     name: osqueryd
