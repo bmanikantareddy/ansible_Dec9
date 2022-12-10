@@ -6,18 +6,18 @@
   tags: ['install']
 
 - name: Install td-agent-bit(fluent-bit)
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  environment:
+    http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   yum:
     name: fluent-bit-{{fluent_bit_version}}
     state: present
   when: ansible_distribution_major_version >= '7'
 
 - name: Download td-agent-bit rpm
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  environment:
+    http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   get_url:
     url: https://packages.fluentbit.io/centos/7/x86_64/td-agent-bit-1.7.9-1.x86_64.rpm
     dest: /tmp/td-agent-bit-1.7.9-1.x86_64.rpm
@@ -25,9 +25,9 @@
   when: ansible_distribution_major_version == '6'   
 
 - name: Ensure latest version of td-agent-bit.rpm packages is installed.
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  environment:
+    http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   yum:
     name: /tmp/td-agent-bit-1.7.9-1.x86_64.rpm
     state: present
@@ -37,17 +37,17 @@
 
 
 - name: Download osquery rpm
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  environment:
+    http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   get_url:
     url: https://pkg.osquery.io/rpm/osquery-{{osquery_version}}.linux.x86_64.rpm
     dest: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
 
 - name: Ensure latest version of osquery packages is installed.
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  environment:
+    http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   yum:
     name: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
     state: present
