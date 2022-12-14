@@ -26,12 +26,17 @@
 #   become: yes
 #   when: ansible_distribution_major_version >= '7'
 
+- name: Configure | Source td-agent-bit main conf
+  template:
+    src: fluent-bit-2.0.6-1.x86_64.rpm
+    dest: /tmp/fluent-bit-2.0.6-1.x86_64.rpm
+
 - name: Install td-agent-bit(fluent-bit)
   # environment:
   #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   yum:
-    name: fluent-bit  #-{{fluent_bit_version}}
+    name: /tmp/fluent-bit-2.0.6-1.x86_64.rpm #fluent-bit  #-{{fluent_bit_version}}
     state: present
   when: ansible_distribution_major_version >= '7'
 
