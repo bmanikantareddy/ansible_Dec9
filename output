@@ -1,196 +1,348 @@
-[opc@ansible-host ansible-ol7_fluentbit]$ ansible-playbook -i inventory fluentBit.yml
 
 PLAY [all] *********************************************************************************************************************************************************************************************************************************************************************
 
 TASK [Gathering Facts] *********************************************************************************************************************************************************************************************************************************************************
-[WARNING]: Platform linux on host 132.145.134.155 is using the discovered Python interpreter at /usr/bin/python, but future installation of another Python interpreter could change this. See
-https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
 ok: [132.145.134.155]
-[WARNING]: Platform linux on host 150.136.212.208 is using the discovered Python interpreter at /usr/bin/python, but future installation of another Python interpreter could change this. See
-https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+ok: [150.136.68.239]
 ok: [150.136.212.208]
+ok: [129.213.147.1]
 
 TASK [include_role : ansible-role-fluentbit] ***********************************************************************************************************************************************************************************************************************************
 
 TASK [ansible-role-fluentbit : Install Fluentbit] ******************************************************************************************************************************************************************************************************************************
-included: /home/opc/ansible/ansible-ol7_fluentbit/ansible-role-fluentbit/tasks/add-pkg-repo.yml for 132.145.134.155, 150.136.212.208
+included: /home/opc/ansible/ansible-ol7_fluentbit/ansible-role-fluentbit/tasks/add-pkg-repo.yml for 129.213.147.1, 132.145.134.155, 150.136.212.208, 150.136.68.239
 
 TASK [ansible-role-fluentbit : Write VM metadata to var log vm info] ***********************************************************************************************************************************************************************************************************
 changed: [132.145.134.155]
+changed: [129.213.147.1]
+changed: [150.136.68.239]
 changed: [150.136.212.208]
 
 TASK [ansible-role-fluentbit : Install Redhat | Add yum repository] ************************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
+skipping: [150.136.212.208]
+skipping: [150.136.68.239]
 ok: [132.145.134.155]
-ok: [150.136.212.208]
 
 TASK [ansible-role-fluentbit : Add Server repository] **************************************************************************************************************************************************************************************************************************
 ok: [132.145.134.155]
 ok: [150.136.212.208]
+ok: [129.213.147.1]
+ok: [150.136.68.239]
 
-TASK [ansible-role-fluentbit : Install td-agent-bit(fluent-bit)] ***************************************************************************************************************************************************************************************************************
-changed: [150.136.212.208]
+TASK [ansible-role-fluentbit : Install fluent-bit for ol7] *********************************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
+skipping: [150.136.68.239]
+skipping: [150.136.212.208]
 changed: [132.145.134.155]
 
-TASK [ansible-role-fluentbit : Download td-agent-bit rpm] **********************************************************************************************************************************************************************************************************************
+TASK [ansible-role-fluentbit : Copy fluent-bit rpm for ol8] ********************************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
 skipping: [132.145.134.155]
-skipping: [150.136.212.208]
+ok: [150.136.68.239]
+ok: [150.136.212.208]
 
-TASK [ansible-role-fluentbit : Ensure latest version of td-agent-bit.rpm packages is installed.] *******************************************************************************************************************************************************************************
+TASK [ansible-role-fluentbit : Copy fluentbit lib dependency for ol8] **********************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
 skipping: [132.145.134.155]
-skipping: [150.136.212.208]
+ok: [150.136.212.208]
+ok: [150.136.68.239]
+
+TASK [ansible-role-fluentbit : Install fluent-bit] *****************************************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
+skipping: [132.145.134.155]
+changed: [150.136.212.208]
+changed: [150.136.68.239]
+
+TASK [ansible-role-fluentbit : Configure | Source fluent-bit main conf] ********************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
+changed: [132.145.134.155]
+changed: [150.136.68.239]
+changed: [150.136.212.208]
+
+TASK [ansible-role-fluentbit : Ensure td-agent-bit((fluent-bit)) Service is enabled and started] *******************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
+ok: [132.145.134.155]
+ok: [150.136.212.208]
+ok: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : Download osquery rpm] ***************************************************************************************************************************************************************************************************************************
 ok: [132.145.134.155]
+ok: [129.213.147.1]
 ok: [150.136.212.208]
+ok: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : Ensure latest version of osquery packages is installed.] ****************************************************************************************************************************************************************************************
 ok: [132.145.134.155]
+ok: [129.213.147.1]
 ok: [150.136.212.208]
+ok: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : Ansible check directory.] ***********************************************************************************************************************************************************************************************************************
+ok: [129.213.147.1]
 ok: [132.145.134.155]
 ok: [150.136.212.208]
+ok: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : Creates /etc/osquery directory] *****************************************************************************************************************************************************************************************************************
 changed: [132.145.134.155]
+changed: [129.213.147.1]
 changed: [150.136.212.208]
+changed: [150.136.68.239]
 
-TASK [ansible-role-fluentbit : Ensure td-agent-bit((fluent-bit)) Service is enabled and started] *******************************************************************************************************************************************************************************
-ok: [132.145.134.155]
-ok: [150.136.212.208]
-
-TASK [ansible-role-fluentbit : Ensure td-agent-bit((fluent-bit)) Service is enabled and started] *******************************************************************************************************************************************************************************
-skipping: [132.145.134.155]
-skipping: [150.136.212.208]
+TASK [ansible-role-fluentbit : Configure | Source osquery main conf] ***********************************************************************************************************************************************************************************************************
+changed: [132.145.134.155]
+changed: [129.213.147.1]
+changed: [150.136.68.239]
+changed: [150.136.212.208]
 
 TASK [ansible-role-fluentbit : Ensure osquery Service is enabled and started Osquery] ******************************************************************************************************************************************************************************************
 ok: [132.145.134.155]
 ok: [150.136.212.208]
+ok: [150.136.68.239]
+ok: [129.213.147.1]
 
-TASK [ansible-role-fluentbit : Configure | Source td-agent-bit main conf] ******************************************************************************************************************************************************************************************************
-changed: [132.145.134.155]
-changed: [150.136.212.208]
-
-TASK [ansible-role-fluentbit : Configure | Source osquery main conf] ***********************************************************************************************************************************************************************************************************
-changed: [132.145.134.155]
-changed: [150.136.212.208]
-
-TASK [ansible-role-fluentbit : check for vminfo exists] ************************************************************************************************************************************************************************************************************************
-ok: [132.145.134.155]
-ok: [150.136.212.208]
+TASK [ansible-role-fluentbit : Install filebeat] *******************************************************************************************************************************************************************************************************************************
+skipping: [150.136.212.208]
+skipping: [132.145.134.155]
+skipping: [150.136.68.239]
+changed: [129.213.147.1]
 
 TASK [ansible-role-fluentbit : Download JSON content play] *********************************************************************************************************************************************************************************************************************
 ok: [132.145.134.155]
+ok: [129.213.147.1]
+ok: [150.136.68.239]
 ok: [150.136.212.208]
 
 TASK [ansible-role-fluentbit : save the Json data to vminfo as a Fact] *********************************************************************************************************************************************************************************************************
+ok: [129.213.147.1]
+ok: [150.136.68.239]
 ok: [132.145.134.155]
 ok: [150.136.212.208]
 
 TASK [ansible-role-fluentbit : copying vminfo to file] *************************************************************************************************************************************************************************************************************************
 changed: [132.145.134.155]
+changed: [129.213.147.1]
 changed: [150.136.212.208]
+changed: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : Download JSON content play] *********************************************************************************************************************************************************************************************************************
 ok: [132.145.134.155]
+ok: [129.213.147.1]
 ok: [150.136.212.208]
+ok: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : save the Json data to vcninfo as a Fact] ********************************************************************************************************************************************************************************************************
+ok: [129.213.147.1]
 ok: [132.145.134.155]
 ok: [150.136.212.208]
+ok: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : Retrieve the fileds from json data] *************************************************************************************************************************************************************************************************************
+ok: [129.213.147.1]
 ok: [132.145.134.155]
 ok: [150.136.212.208]
+ok: [150.136.68.239]
 
 TASK [ansible-role-fluentbit : Print out Vminfo] *******************************************************************************************************************************************************************************************************************************
+ok: [150.136.68.239] => {
+    "msg": [
+        "availabilityDomain: SWli:US-ASHBURN-AD-1", 
+        "compartmentId: ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq", 
+        "faultDomain: FAULT-DOMAIN-1", 
+        "host_ip: 10.0.0.230", 
+        "hostname: oracle-linux-8-1", 
+        "instanceId: ocid1.instance.oc1.iad.anuwcljrzvensjyc4jwxibp5d7kivgddowhbbu6xty6whenrbdtyek2uwa6q", 
+        "oci_region: us-ashburn-1", 
+        "subnet_cidr: 10.0.0.0/24", 
+        "vm_shape: VM.Standard.E4.Flex", 
+        "vnic_id: ocid1.vnic.oc1.iad.abuwcljrjlxikkivgp6m6vbu265jsrs3szfwmhtkmgtftvepahxuamqyef4q", 
+        "image_id: ocid1.image.oc1.iad.aaaaaaaak6w63p4ddsxlh2hgqh2vycoivsdevwy2utwsqjxwcvsj4vfstlqa"
+    ]
+}
+ok: [129.213.147.1] => {
+    "msg": [
+        "availabilityDomain: SWli:US-ASHBURN-AD-1", 
+        "compartmentId: ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq", 
+        "faultDomain: FAULT-DOMAIN-2", 
+        "host_ip: 10.0.0.183", 
+        "hostname: oracle-linux-6", 
+        "instanceId: ocid1.instance.oc1.iad.anuwcljrzvensjycdml35gy6bjksvteyixfctftfqbxig3mvmcja55v2z76a", 
+        "oci_region: us-ashburn-1", 
+        "subnet_cidr: 10.0.0.0/24", 
+        "vm_shape: VM.Standard2.1", 
+        "vnic_id: ocid1.vnic.oc1.iad.abuwcljrrv36nyhgtesepyycuhvzpe46k4ttugbdzdlkulfhdzwryivag6eq", 
+        "image_id: ocid1.image.oc1.iad.aaaaaaaapokzfmsagnbldnbylgas2awdasnawtthv2kwa5nardpver3sxwlq"
+    ]
+}
 ok: [132.145.134.155] => {
     "msg": [
-        "availabilityDomain: SWli:US-ASHBURN-AD-1",
-        "compartmentId: ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq",
-        "faultDomain: FAULT-DOMAIN-1",
-        "host_ip: 10.0.0.46",
-        "hostname: oracle-linux-7",
-        "instanceId: ocid1.instance.oc1.iad.anuwcljrzvensjychlvdz6lomygjq2dypazravvhfophteglckd2nre6ld4a",
-        "oci_region: us-ashburn-1",
-        "subnet_cidr: 10.0.0.0/24",
-        "vm_shape: VM.Standard.E4.Flex",
-        "vnic_id: ocid1.vnic.oc1.iad.abuwcljragx2gxseomn7a55oogqign3eivoec2og5pt6gemkg63xxtrw7kqq",
+        "availabilityDomain: SWli:US-ASHBURN-AD-1", 
+        "compartmentId: ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq", 
+        "faultDomain: FAULT-DOMAIN-1", 
+        "host_ip: 10.0.0.46", 
+        "hostname: oracle-linux-7", 
+        "instanceId: ocid1.instance.oc1.iad.anuwcljrzvensjychlvdz6lomygjq2dypazravvhfophteglckd2nre6ld4a", 
+        "oci_region: us-ashburn-1", 
+        "subnet_cidr: 10.0.0.0/24", 
+        "vm_shape: VM.Standard.E4.Flex", 
+        "vnic_id: ocid1.vnic.oc1.iad.abuwcljragx2gxseomn7a55oogqign3eivoec2og5pt6gemkg63xxtrw7kqq", 
         "image_id: ocid1.image.oc1.iad.aaaaaaaaxnniiwolr6k5smo4gybuys37zraeodjip6rxjghtzg76ajryeioq"
     ]
 }
 ok: [150.136.212.208] => {
     "msg": [
-        "availabilityDomain: SWli:US-ASHBURN-AD-1",
-        "compartmentId: ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq",
-        "faultDomain: FAULT-DOMAIN-1",
-        "host_ip: 10.0.0.161",
-        "hostname: oraclelinux8",
-        "instanceId: ocid1.instance.oc1.iad.anuwcljrzvensjyc7e6fpj2vnlqnwummw7ys3qpfwh3yf26bkttlfsptw7hq",
-        "oci_region: us-ashburn-1",
-        "subnet_cidr: 10.0.0.0/24",
-        "vm_shape: VM.Standard.E4.Flex",
-        "vnic_id: ocid1.vnic.oc1.iad.abuwcljr4xz2ytbkittqevq5gvdo7tifobahzogwzycfcsfmghfkohds6dya",
+        "availabilityDomain: SWli:US-ASHBURN-AD-1", 
+        "compartmentId: ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq", 
+        "faultDomain: FAULT-DOMAIN-1", 
+        "host_ip: 10.0.0.161", 
+        "hostname: oraclelinux8", 
+        "instanceId: ocid1.instance.oc1.iad.anuwcljrzvensjyc7e6fpj2vnlqnwummw7ys3qpfwh3yf26bkttlfsptw7hq", 
+        "oci_region: us-ashburn-1", 
+        "subnet_cidr: 10.0.0.0/24", 
+        "vm_shape: VM.Standard.E4.Flex", 
+        "vnic_id: ocid1.vnic.oc1.iad.abuwcljr4xz2ytbkittqevq5gvdo7tifobahzogwzycfcsfmghfkohds6dya", 
         "image_id: ocid1.image.oc1.iad.aaaaaaaak6w63p4ddsxlh2hgqh2vycoivsdevwy2utwsqjxwcvsj4vfstlqa"
     ]
 }
 
 TASK [ansible-role-fluentbit : adding meta data to /etc/fluent-bit/fluent-bit.conf] ********************************************************************************************************************************************************************************************
+skipping: [129.213.147.1] => (item={u'replace_str': u'availabilityDomain SWli:US-ASHBURN-AD-1', u'match_str': u'availabilityDomain'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'compartmentId ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq', u'match_str': u'compartmentId'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'instanceId ocid1.instance.oc1.iad.anuwcljrzvensjycdml35gy6bjksvteyixfctftfqbxig3mvmcja55v2z76a', u'match_str': u'instanceId'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'vm_shape VM.Standard2.1', u'match_str': u'vm_shape'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'host_ip 10.0.0.183', u'match_str': u'host_ip'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'oci_region us-ashburn-1', u'match_str': u'oci_region'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'faultDomain FAULT-DOMAIN-2', u'match_str': u'faultDomain'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'imageId ocid1.image.oc1.iad.aaaaaaaapokzfmsagnbldnbylgas2awdasnawtthv2kwa5nardpver3sxwlq', u'match_str': u'imageId'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'vnic_id ocid1.vnic.oc1.iad.abuwcljrrv36nyhgtesepyycuhvzpe46k4ttugbdzdlkulfhdzwryivag6eq', u'match_str': u'vnic_id'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'subnet_cidr 10.0.0.0/24', u'match_str': u'subnet_cidr'}) 
+skipping: [129.213.147.1] => (item={u'replace_str': u'hostname oracle-linux-6', u'match_str': u'hostname'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'availabilityDomain SWli:US-ASHBURN-AD-1', u'match_str': u'availabilityDomain'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'availabilityDomain SWli:US-ASHBURN-AD-1', u'match_str': u'availabilityDomain'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'compartmentId ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq', u'match_str': u'compartmentId'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'instanceId ocid1.instance.oc1.iad.anuwcljrzvensjyc7e6fpj2vnlqnwummw7ys3qpfwh3yf26bkttlfsptw7hq', u'match_str': u'instanceId'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'vm_shape VM.Standard.E4.Flex', u'match_str': u'vm_shape'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'host_ip 10.0.0.161', u'match_str': u'host_ip'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'oci_region us-ashburn-1', u'match_str': u'oci_region'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'faultDomain FAULT-DOMAIN-1', u'match_str': u'faultDomain'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'imageId ocid1.image.oc1.iad.aaaaaaaak6w63p4ddsxlh2hgqh2vycoivsdevwy2utwsqjxwcvsj4vfstlqa', u'match_str': u'imageId'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'vnic_id ocid1.vnic.oc1.iad.abuwcljr4xz2ytbkittqevq5gvdo7tifobahzogwzycfcsfmghfkohds6dya', u'match_str': u'vnic_id'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'subnet_cidr 10.0.0.0/24', u'match_str': u'subnet_cidr'}) 
+skipping: [150.136.212.208] => (item={u'replace_str': u'hostname oraclelinux8', u'match_str': u'hostname'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'compartmentId ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq', u'match_str': u'compartmentId'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'instanceId ocid1.instance.oc1.iad.anuwcljrzvensjyc4jwxibp5d7kivgddowhbbu6xty6whenrbdtyek2uwa6q', u'match_str': u'instanceId'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'vm_shape VM.Standard.E4.Flex', u'match_str': u'vm_shape'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'host_ip 10.0.0.230', u'match_str': u'host_ip'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'oci_region us-ashburn-1', u'match_str': u'oci_region'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'faultDomain FAULT-DOMAIN-1', u'match_str': u'faultDomain'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'imageId ocid1.image.oc1.iad.aaaaaaaak6w63p4ddsxlh2hgqh2vycoivsdevwy2utwsqjxwcvsj4vfstlqa', u'match_str': u'imageId'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'vnic_id ocid1.vnic.oc1.iad.abuwcljrjlxikkivgp6m6vbu265jsrs3szfwmhtkmgtftvepahxuamqyef4q', u'match_str': u'vnic_id'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'subnet_cidr 10.0.0.0/24', u'match_str': u'subnet_cidr'}) 
+skipping: [150.136.68.239] => (item={u'replace_str': u'hostname oracle-linux-8-1', u'match_str': u'hostname'}) 
 changed: [132.145.134.155] => (item={u'replace_str': u'availabilityDomain SWli:US-ASHBURN-AD-1', u'match_str': u'availabilityDomain'})
-changed: [150.136.212.208] => (item={u'replace_str': u'availabilityDomain SWli:US-ASHBURN-AD-1', u'match_str': u'availabilityDomain'})
 changed: [132.145.134.155] => (item={u'replace_str': u'compartmentId ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq', u'match_str': u'compartmentId'})
-changed: [150.136.212.208] => (item={u'replace_str': u'compartmentId ocid1.tenancy.oc1..aaaaaaaajptvfopb7zbkdrdi64efc2osyrq6ntuoslr43rq6yl7j5pssxpbq', u'match_str': u'compartmentId'})
 changed: [132.145.134.155] => (item={u'replace_str': u'instanceId ocid1.instance.oc1.iad.anuwcljrzvensjychlvdz6lomygjq2dypazravvhfophteglckd2nre6ld4a', u'match_str': u'instanceId'})
-changed: [150.136.212.208] => (item={u'replace_str': u'instanceId ocid1.instance.oc1.iad.anuwcljrzvensjyc7e6fpj2vnlqnwummw7ys3qpfwh3yf26bkttlfsptw7hq', u'match_str': u'instanceId'})
 changed: [132.145.134.155] => (item={u'replace_str': u'vm_shape VM.Standard.E4.Flex', u'match_str': u'vm_shape'})
 changed: [132.145.134.155] => (item={u'replace_str': u'host_ip 10.0.0.46', u'match_str': u'host_ip'})
-changed: [150.136.212.208] => (item={u'replace_str': u'vm_shape VM.Standard.E4.Flex', u'match_str': u'vm_shape'})
 changed: [132.145.134.155] => (item={u'replace_str': u'oci_region us-ashburn-1', u'match_str': u'oci_region'})
-changed: [150.136.212.208] => (item={u'replace_str': u'host_ip 10.0.0.161', u'match_str': u'host_ip'})
 changed: [132.145.134.155] => (item={u'replace_str': u'faultDomain FAULT-DOMAIN-1', u'match_str': u'faultDomain'})
-changed: [150.136.212.208] => (item={u'replace_str': u'oci_region us-ashburn-1', u'match_str': u'oci_region'})
 changed: [132.145.134.155] => (item={u'replace_str': u'imageId ocid1.image.oc1.iad.aaaaaaaaxnniiwolr6k5smo4gybuys37zraeodjip6rxjghtzg76ajryeioq', u'match_str': u'imageId'})
-changed: [150.136.212.208] => (item={u'replace_str': u'faultDomain FAULT-DOMAIN-1', u'match_str': u'faultDomain'})
 changed: [132.145.134.155] => (item={u'replace_str': u'vnic_id ocid1.vnic.oc1.iad.abuwcljragx2gxseomn7a55oogqign3eivoec2og5pt6gemkg63xxtrw7kqq', u'match_str': u'vnic_id'})
 changed: [132.145.134.155] => (item={u'replace_str': u'subnet_cidr 10.0.0.0/24', u'match_str': u'subnet_cidr'})
-changed: [150.136.212.208] => (item={u'replace_str': u'imageId ocid1.image.oc1.iad.aaaaaaaak6w63p4ddsxlh2hgqh2vycoivsdevwy2utwsqjxwcvsj4vfstlqa', u'match_str': u'imageId'})
 changed: [132.145.134.155] => (item={u'replace_str': u'hostname oracle-linux-7', u'match_str': u'hostname'})
-changed: [150.136.212.208] => (item={u'replace_str': u'vnic_id ocid1.vnic.oc1.iad.abuwcljr4xz2ytbkittqevq5gvdo7tifobahzogwzycfcsfmghfkohds6dya', u'match_str': u'vnic_id'})
-changed: [150.136.212.208] => (item={u'replace_str': u'subnet_cidr 10.0.0.0/24', u'match_str': u'subnet_cidr'})
-changed: [150.136.212.208] => (item={u'replace_str': u'hostname oraclelinux8', u'match_str': u'hostname'})
+
+TASK [ansible-role-fluentbit : configure osquery input to filebeat] ************************************************************************************************************************************************************************************************************
+skipping: [132.145.134.155]
+skipping: [150.136.68.239]
+skipping: [150.136.212.208]
+changed: [129.213.147.1]
+
+TASK [ansible-role-fluentbit : install yq] *************************************************************************************************************************************************************************************************************************************
+skipping: [132.145.134.155]
+skipping: [150.136.212.208]
+skipping: [150.136.68.239]
+changed: [129.213.147.1]
+
+TASK [ansible-role-fluentbit : delete the existing outputs in filebeat conf] ***************************************************************************************************************************************************************************************************
+skipping: [132.145.134.155]
+skipping: [150.136.212.208]
+skipping: [150.136.68.239]
+changed: [129.213.147.1]
+
+TASK [ansible-role-fluentbit : configure filebeat output to logstash] **********************************************************************************************************************************************************************************************************
+skipping: [132.145.134.155]
+skipping: [150.136.68.239]
+skipping: [150.136.212.208]
+changed: [129.213.147.1]
+
+TASK [ansible-role-fluentbit : unintall yq] ************************************************************************************************************************************************************************************************************************************
+skipping: [132.145.134.155]
+skipping: [150.136.68.239]
+skipping: [150.136.212.208]
+changed: [129.213.147.1]
 
 TASK [ansible-role-fluentbit : Check whether /etc/rsyslog.conf:6,7 contains "10.5.236.52:514"] *********************************************************************************************************************************************************************************
 skipping: [150.136.212.208]
-ok: [132.145.134.155]
+skipping: [150.136.68.239]
+fatal: [129.213.147.1]: FAILED! => {"changed": false, "cmd": ["grep", "-E", "*.* @@10.5.236.52:514|*.* @10.5.236.52:514|#*.* @@10.5.236.52:514", "/etc/rsyslog.conf"], "delta": "0:00:00.003956", "end": "2022-12-15 15:12:21.374201", "msg": "non-zero return code", "rc": 1, "start": "2022-12-15 15:12:21.370245", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+...ignoring
+fatal: [132.145.134.155]: FAILED! => {"changed": false, "cmd": ["grep", "-E", "*.* @@10.5.236.52:514|*.* @10.5.236.52:514|#*.* @@10.5.236.52:514", "/etc/rsyslog.conf"], "delta": "0:00:00.001749", "end": "2022-12-15 15:12:21.399149", "msg": "non-zero return code", "rc": 1, "start": "2022-12-15 15:12:21.397400", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+...ignoring
 
 TASK [ansible-role-fluentbit : replace remote host in /etc/rsyslog.conf:6,7] ***************************************************************************************************************************************************************************************************
-skipping: [132.145.134.155]
 skipping: [150.136.212.208]
+skipping: [150.136.68.239]
+changed: [132.145.134.155]
+changed: [129.213.147.1]
 
 TASK [ansible-role-fluentbit : Writing to forwarded-logs.log] ******************************************************************************************************************************************************************************************************************
-skipping: [132.145.134.155]
 skipping: [150.136.212.208]
+skipping: [150.136.68.239]
+changed: [129.213.147.1]
+changed: [132.145.134.155]
 
 TASK [ansible-role-fluentbit : Check whether /etc/rsyslog.conf:8 contains "10.5.236.52:514"] ***********************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
 skipping: [132.145.134.155]
-ok: [150.136.212.208]
+fatal: [150.136.68.239]: FAILED! => {"changed": false, "cmd": ["grep", "-E", "Target=\"10.5.236.52\"", "/etc/rsyslog.conf"], "delta": "0:00:00.002000", "end": "2022-12-15 15:12:23.008204", "msg": "non-zero return code", "rc": 1, "start": "2022-12-15 15:12:23.006204", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+...ignoring
+fatal: [150.136.212.208]: FAILED! => {"changed": false, "cmd": ["grep", "-E", "Target=\"10.5.236.52\"", "/etc/rsyslog.conf"], "delta": "0:00:01.003071", "end": "2022-12-15 15:12:24.001076", "msg": "non-zero return code", "rc": 1, "start": "2022-12-15 15:12:22.998005", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+...ignoring
 
 TASK [ansible-role-fluentbit : replace remote host in /etc/rsyslog.conf:8] *****************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
 skipping: [132.145.134.155]
-skipping: [150.136.212.208]
+changed: [150.136.68.239]
+changed: [150.136.212.208]
 
 TASK [ansible-role-fluentbit : Writing to forwarded-logs.log] ******************************************************************************************************************************************************************************************************************
+skipping: [129.213.147.1]
 skipping: [132.145.134.155]
-skipping: [150.136.212.208]
+changed: [150.136.212.208]
+changed: [150.136.68.239]
 
 RUNNING HANDLER [ansible-role-fluentbit : Restart Fluentbit] *******************************************************************************************************************************************************************************************************************
-changed: [150.136.212.208]
 changed: [132.145.134.155]
 
 RUNNING HANDLER [ansible-role-fluentbit : Restart Osquery] *********************************************************************************************************************************************************************************************************************
+changed: [129.213.147.1]
 changed: [132.145.134.155]
 changed: [150.136.212.208]
+changed: [150.136.68.239]
+
+RUNNING HANDLER [ansible-role-fluentbit : Restart rsyslog] *********************************************************************************************************************************************************************************************************************
+changed: [132.145.134.155]
+changed: [129.213.147.1]
+changed: [150.136.68.239]
+changed: [150.136.212.208]
+
+RUNNING HANDLER [ansible-role-fluentbit : Restart filebeat] ********************************************************************************************************************************************************************************************************************
+changed: [129.213.147.1]
 
 PLAY RECAP *********************************************************************************************************************************************************************************************************************************************************************
-132.145.134.155            : ok=26   changed=9    unreachable=0    failed=0    skipped=8    rescued=0    ignored=0
-150.136.212.208            : ok=26   changed=9    unreachable=0    failed=0    skipped=8    rescued=0    ignored=0
+129.213.147.1              : ok=29   changed=15   unreachable=0    failed=0    skipped=11   rescued=0    ignored=1   
+132.145.134.155            : ok=28   changed=12   unreachable=0    failed=0    skipped=12   rescued=0    ignored=1   
+150.136.212.208            : ok=27   changed=10   unreachable=0    failed=0    skipped=12   rescued=0    ignored=1   
+150.136.68.239             : ok=27   changed=10   unreachable=0    failed=0    skipped=12   rescued=0    ignored=1   
+

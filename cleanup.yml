@@ -21,7 +21,7 @@
     - fluent-bit
   
   - name: Remove all configuration files
-    ansible.builtin.file:
+    file:
       path: "{{item}}" 
       state: absent
     with_items: 
@@ -30,9 +30,30 @@
     - /etc/td-agent-bit/
     - /etc/osquery
     - /usr/bin/yq
-    - /var/log/vminfo 
+    - /var/log/vminfo
+    - /var/log/rsyslog/forwarded-logs.log
 
+  - name: remove /tmp dir contents
+    file: path='/tmp/{{ item }}' state=absent
+    with_fileglob:
+      - /tmp/*   
 
+# remote_host is: name/ip, e.g. 192.168.0.1, port optional e.g. 10514
+#Target="remote_host" Port="XXX" Protocol="tcp")
 
-  
+    # for Oracle linux version >= 8
+  - name: replace remote host in /etc/rsyslog.conf:8
+    lineinfile:
+      path: /etc/rsyslog.conf
+      regexp: 'Target="10.5.236.52"'
+      line: '#Target="remote_host" Port="XXX" Protocol="tcp")'
+    when: ansible_distribution_major_version >= '8'   
+
+    # for Oracle linux version >= 8
+  - name: replace remote host in /etc/rsyslog.conf:8
+    lineinfile:
+      path: /etc/rsyslog.conf
+      regexp: "@@10.5.236.52:514"
+      state: absent
+    when: ansible_distribution_major_version < '8'    
     

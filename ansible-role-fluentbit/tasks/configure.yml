@@ -1,21 +1,16 @@
 ---
-- name: Configure | Source td-agent-bit main conf
-  template:
-    src: fluent-bit.conf
-    dest: /etc/fluent-bit/fluent-bit.conf
-    mode: 0644
+# - name: Configure | Source td-agent-bit main conf
+#   template:
+#     src: fluent-bit.conf
+#     dest: /etc/fluent-bit/fluent-bit.conf
+#     mode: 0644
 
-- name: Configure | Source osquery main conf
-  template:
-    src: osquery.conf
-    dest: /etc/osquery/osquery.conf
-    mode: 0644
-  notify: Restart Osquery
-
-- name: check for vminfo exists
-  stat:
-    path: /var/log/vminfo
-  register: vminfo_exists  
+# - name: Configure | Source osquery main conf
+#   template:
+#     src: osquery.conf
+#     dest: /etc/osquery/osquery.conf
+#     mode: 0644
+#   notify: Restart Osquery
 
 - name: Extract meta data from OCI
   block: 
@@ -94,7 +89,92 @@
     - {match_str: "vnic_id" , replace_str: "vnic_id {{vnic_id}}"}  
     - {match_str: "subnet_cidr" , replace_str: "subnet_cidr {{subnet_cidr}}"}  
     - {match_str: "hostname" , replace_str: "hostname {{hostname}}"} 
-    notify: Restart Fluentbit  
+    notify: Restart Fluentbit
+    when: ansible_distribution_major_version == '7'
+
+  - name: configuring file beat for ol6
+    block:
+    - name: configure osquery input to filebeat
+      blockinfile:
+        path: /etc/filebeat/filebeat.yml
+        insertafter: "filebeat.inputs:"
+        marker: "## {mark} OSquery input for filebeat logs" 
+        content: |
+          # osquery input
+          - type: log
+            enabled: true
+            paths:
+              - /var/log/osquery/osqueryd.results.log
+            fileds:
+                  availabilityDomain: "{{availabilityDomain}}"
+                  compartmentId: "{{compartmentId}}"
+                  faultDomain: "{{faultDomain}}"
+                  host_ip: "{{host_ip}}"
+                  hostname: "{{hostname}}"
+                  instanceId: "{{instanceId}}"
+                  oci_region: "{{oci_region}}"
+                  subnet_cidr: "{{subnet_cidr}}"
+                  vm_shape: "{{subnet_cidr}}"
+                  vnic_id: "{{vnic_id}}"
+                  imageId: "{{image_id}}"
+            json.keys_under_root: true
+            fields_under_root: true
+    - name: install yq
+      become: yes
+      get_url:
+        url: https://github.com/mikefarah/yq/releases/download/v4.25.1/yq_linux_amd64
+        dest: /usr/bin/yq
+        mode: 0755
+        validate_certs: no
+    # filebeat supports only one output at a time.
+    - name: delete the existing outputs in filebeat conf
+      shell: yq eval -i 'del(."output.elasticsearch", ."output.logstash")' /etc/filebeat/filebeat.yml 
+      register: result
+    - name: configure filebeat output to logstash
+      blockinfile: 
+        path: /etc/filebeat/filebeat.yml
+        insertafter: EOF
+        marker: "# {mark} logstash output direction for filebeat" 
+        content: |
+          output.logstash:
+            enable: true
+            hosts: ["{{logstashfqdn}}"]
+      notify: Restart filebeat      
+    # - name: configure additional fileds in filebeat
+    #   blockinfile: 
+    #     path: /etc/filebeat/filebeat.yml
+    #     insertafter: "processors:"
+    #     marker: "# {mark} add_fileds vm details" 
+    #     content: |
+    #       # add_fields section 
+    #         - add_fields:
+    #             fields:
+    #               availabilityDomain: "{{availabilityDomain}}"
+    #               compartmentId: "{{compartmentId}}"
+    #               faultDomain: "{{faultDomain}}"
+    #               host_ip: "{{host_ip}}"
+    #               hostname: "{{hostname}}"
+    #               instanceId: "{{instanceId}}"
+    #               oci_region: "{{oci_region}}"
+    #               subnet_cidr: "{{subnet_cidr}}"
+    #               vm_shape: "{{subnet_cidr}}"
+    #               vnic_id: "{{vnic_id}}"
+    #               imageId: "{{image_id}}"
+    #             target: ''
+    #   notify: Restart filebeat    
+
+    # Remove    
+    # - name: Make sure filebeat autostarts
+    #   service:
+    #     name: filebeat
+    #     enabled: yes
+    #     state: started
+    #   notify: Restart filebeat
+    - name: unintall yq
+      file:
+        path: /usr/bin/yq
+        state: absent        
+    when: ansible_distribution_major_version == '6'                                     
 
   - name: Configure /etc/rsyslog.conf for linux 6 & 7
     block:
@@ -151,9 +231,3 @@
 
     when: ansible_distribution_major_version >= '8'    
 
-  # - name: Writing to forwarded-logs.log
-  #   shell: |
-  #     [ ! -d "mkdir /var/log/rsyslog" ] && mkdir /var/log/rsyslog
-  #     [ ! -f /var/log/rsyslog/forwarded-logs.log ] && touch /var/log/rsyslog/forwarded-logs.log
-  #     echo 'SIEM rsyslog is configured' >> /var/log/rsyslog/forwarded-logs.log
-  #   notify: Restart rsyslog

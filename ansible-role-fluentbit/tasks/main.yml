@@ -5,117 +5,104 @@
   include_tasks: 'add-pkg-repo.yml'
   tags: ['install']
 
-# - name: Download fluent-bit rpm
-#   # environment:
-#   #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-#   #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-#   get_url:
-#     url: https://yum.oracle.com/repo/OracleLinux/OL8/developer/EPEL/x86_64/getPackage/fluent-bit-1.8.15-1.el8.x86_64.rpm
-#     dest: /tmp/fluent-bit-1.8.15-1.el8.x86_64.rpm
-#     validate_certs: no
-#   when: ansible_distribution_major_version >= '7'
+# flunet-bit tasks
+- name: Install fluent-bit for ol7
+  # environment:
+  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  yum:
+    name: fluent-bit-{{fluent_bit_version}}
+    state: present
+  when: ansible_distribution_major_version == '7'
 
-# - name: Ensure latest version of fluent-bit.rpm packages is installed.
-#   # environment:
-#   #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-#   #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-#   yum:
-#     name: /tmp/fluent-bit-1.8.15-1.el8.x86_64.rpm
-#     state: present
-#     disable_gpg_check: true
-#   become: yes
-#   when: ansible_distribution_major_version >= '7'
+- name: Copy & install fluent-bit & dependencies rpm for ol8
+  block:
+  - name: Copy fluent-bit rpm for ol8
+    copy:
+      src: fluent-bit-2.0.6-1.x86_64.rpm
+      dest: /tmp/fluent-bit-2.0.6-1.x86_64.rpm
+  
+  - name: Copy fluentbit lib dependency for ol8
+    copy:
+      src: libpq-13.5-1.el8.x86_64.rpm
+      dest: /tmp/libpq-13.5-1.el8.x86_64.rpm
+  
+  - name: Install fluent-bit
+    shell: yum localinstall /tmp/fluent-bit-2.0.6-1.x86_64.rpm /tmp/libpq-13.5-1.el8.x86_64.rpm -y    
 
-- name: Configure | Source td-agent-bit main conf
+  when: ansible_distribution_major_version == '8'
+
+- name: Configure | Source fluent-bit main conf
   template:
-    src: fluent-bit-2.0.6-1.x86_64.rpm
-    dest: /tmp/fluent-bit-2.0.6-1.x86_64.rpm
-
-- name: Install td-agent-bit(fluent-bit)
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  yum:
-    name: /tmp/fluent-bit-2.0.6-1.x86_64.rpm #fluent-bit  #-{{fluent_bit_version}}
-    state: present
-  when: ansible_distribution_major_version >= '7'
-
-- name: Download td-agent-bit rpm
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  get_url:
-    url: https://packages.fluentbit.io/centos/7/x86_64/td-agent-bit-1.7.9-1.x86_64.rpm
-    dest: /tmp/td-agent-bit-1.7.9-1.x86_64.rpm
-    validate_certs: no
-  when: ansible_distribution_major_version == '6'   
-
-- name: Ensure latest version of td-agent-bit.rpm packages is installed.
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  yum:
-    name: /tmp/td-agent-bit-1.7.9-1.x86_64.rpm
-    state: present
-    disable_gpg_check: true
-  become: yes
-  when: ansible_distribution_major_version == '6'
-
-
-- name: Download osquery rpm
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  get_url:
-    url: https://pkg.osquery.io/rpm/osquery-{{osquery_version}}.linux.x86_64.rpm
-    dest: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
-
-- name: Ensure latest version of osquery packages is installed.
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  yum:
-    name: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
-    state: present
-    disable_gpg_check: true
-  become: yes
-
-- name: Ansible check directory.
-  stat:
-    path: /etc/osquery
-  register: osquery_folder
-
-# workaround for latest osquery package
-- name: Creates /etc/osquery directory
-  file:
-    path: /etc/osquery
-    state: directory
-  when: osquery_folder.stat.exists == false   
+    src: fluent-bit.conf
+    dest: /etc/fluent-bit/fluent-bit.conf
+    mode: 0644
+  when: ansible_distribution_major_version >= '7'  
 
 - name: Ensure td-agent-bit((fluent-bit)) Service is enabled and started
   become: true
   service:
     name: fluent-bit
-    enabled: yes 
+    enabled: yes
     state: started
   notify: Restart Fluentbit
   when: ansible_distribution_major_version >= '7'
-  
-- name: Ensure td-agent-bit((fluent-bit)) Service is enabled and started
-  become: true
-  service:
-    name: td-agent-bit
-    enabled: yes 
-    state: started
-  notify: Restart td-agent-bit
-  when: ansible_distribution_major_version == '6'
 
-- name: Ensure osquery Service is enabled and started Osquery
-  become: true
-  service:
-    name: osqueryd
-    enabled: yes
-    state: started
-  notify: Restart Osquery
+#OSquery tasks
+- name: Download and instal OSquery rpm
+  block:
+  - name: Download osquery rpm
+    # environment:
+    #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    get_url:
+      #url: https://pkg.osquery.io/rpm/osquery-{{osquery_version}}.linux.x86_64.rpm
+      url: "https://osquery-packages.s3.us-east-1.amazonaws.com/rpm/osquery-{{osquery_version}}.linux.x86_64.rpm"
+      dest: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
+      validate_certs: no
+
+  - name: Ensure latest version of osquery packages is installed.
+    #environment:
+    #  http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    #  https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    yum:
+      name: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
+      state: present
+      disable_gpg_check: true
+    become: yes
+
+  - name: Ansible check directory.
+    stat:
+      path: /etc/osquery
+    register: osquery_folder
+
+  # workaround for latest osquery package
+  - name: Creates /etc/osquery directory
+    file:
+      path: /etc/osquery
+      state: directory
+    when: osquery_folder.stat.exists == false
+
+  - name: Configure | Source osquery main conf
+    template:
+      src: osquery.conf
+      dest: /etc/osquery/osquery.conf
+      mode: 0644
+    notify: Restart Osquery  
+
+  - name: Ensure osquery Service is enabled and started Osquery
+    become: true
+    service:
+      name: osqueryd
+      enabled: yes
+      state: started
+    notify: Restart Osquery  
   
+- name: Install filebeat 
+  ansible.builtin.yum:
+    name: "https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{filebeat_version}}-x86_64.rpm"
+    state: present
+    validate_certs: no
+  when: ansible_distribution_major_version == '6'  
+
 - import_tasks: configure.yml

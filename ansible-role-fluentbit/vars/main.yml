@@ -6,3 +6,6 @@ ld_library_path: "/usr/lib/oracle/18.3/client64/lib/"
 bin_path: "/usr/lib/oracle/18.3/client64/bin/"
 fluent_bit_version: "1.9.5-1"  #it should be greater than 1.9.0-1
 osquery_version: "4.9.0-1"
+logstashhost: "127.0.0.1"
+logstashport: "5044"
+filebeat_version: "7.17.0"

@@ -3,8 +3,8 @@
 
 
 # [linux]
-; 129.213.147.1 ansible_ssh_user=opc ansible_ssh_private_key_file=/home/opc/ansible/id_rsa host_key_checking=false
-; 132.145.134.155 ansible_ssh_user=opc ansible_ssh_private_key_file=/home/opc/ansible/id_rsa host_key_checking=false
-; 150.136.212.208 ansible_ssh_user=opc ansible_ssh_private_key_file=/home/opc/ansible/id_rsa host_key_checking=false
+129.213.147.1 ansible_ssh_user=opc ansible_ssh_private_key_file=/home/opc/ansible/id_rsa host_key_checking=false
+132.145.134.155 ansible_ssh_user=opc ansible_ssh_private_key_file=/home/opc/ansible/id_rsa host_key_checking=false
+150.136.212.208 ansible_ssh_user=opc ansible_ssh_private_key_file=/home/opc/ansible/id_rsa host_key_checking=false
 150.136.68.239 ansible_ssh_user=opc ansible_ssh_private_key_file=/home/opc/ansible/id_rsa host_key_checking=false
 
