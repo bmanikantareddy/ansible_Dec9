@@ -7,9 +7,9 @@
 
 # flunet-bit tasks
 - name: Install fluent-bit for ol7
-  # environment:
-  #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-  #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+  environment:
+    http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
   yum:
     name: fluent-bit-{{fluent_bit_version}}
     state: present
@@ -39,7 +39,7 @@
     mode: 0644
   when: ansible_distribution_major_version >= '7'  
 
-- name: Ensure td-agent-bit((fluent-bit)) Service is enabled and started
+- name: Ensure fluent-bit Service is enabled and started
   become: true
   service:
     name: fluent-bit
@@ -52,9 +52,9 @@
 - name: Download and instal OSquery rpm
   block:
   - name: Download osquery rpm
-    # environment:
-    #   http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-    #   https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    environment:
+      http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+      https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
     get_url:
       #url: https://pkg.osquery.io/rpm/osquery-{{osquery_version}}.linux.x86_64.rpm
       url: "https://osquery-packages.s3.us-east-1.amazonaws.com/rpm/osquery-{{osquery_version}}.linux.x86_64.rpm"
@@ -62,9 +62,9 @@
       validate_certs: no
 
   - name: Ensure latest version of osquery packages is installed.
-    #environment:
-    #  http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
-    #  https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+    environment:
+     http_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
+     https_proxy: http://proxy-1.proxy.oal.oraclevcn.com:80
     yum:
       name: /tmp/osquery-{{osquery_version}}.linux.x86_64.rpm
       state: present
