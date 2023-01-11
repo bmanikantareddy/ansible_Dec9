@@ -106,3 +106,18 @@
   when: ansible_distribution_major_version == '6'  
 
 - import_tasks: configure.yml
+
+- name: Copy fluentbit lib dependency for ol8
+  copy:
+    src: log_rotation.sh
+    dest: /usr/sbin/log_rotation.sh  # destinatoin path to log_rotation.sh
+
+- name: Creates a cron file under /etc/cron.d
+  cron:
+    name: logrotate
+    weekday: "0"
+    minute: "0"
+    hour: "0"
+    user: root
+    job: "/usr/sbin/log_rotation.sh" #path to our log_roation.sh
+    cron_file: logrotate
