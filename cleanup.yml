@@ -32,6 +32,7 @@
     - /usr/bin/yq
     - /var/log/vminfo
     - /var/log/rsyslog/forwarded-logs.log
+    - /usr/sbin/log_rotation.sh
 
   - name: remove /tmp dir contents
     file: path='/tmp/{{ item }}' state=absent
