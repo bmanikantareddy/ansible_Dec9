@@ -18,7 +18,7 @@ log_rotation()
 
 # OSqueryd log rotation
 log_rotation "/var/log/osquery/osqueryd.results.log"
-log_rotation "var/log/messages"
+log_rotation "/var/log/messages"
 # Fluent-bit log rotation
 #log_rotation "replace with fluent-bit path"
 
