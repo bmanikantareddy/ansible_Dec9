@@ -115,7 +115,7 @@
 - name: Creates a cron file under /etc/cron.d
   cron:
     name: logrotate
-    weekday: "0"
+    weekday: "6"
     minute: "0"
     hour: "0"
     user: root
