@@ -90,7 +90,6 @@
     - {match_str: "subnet_cidr" , replace_str: "subnet_cidr {{subnet_cidr}}"}  
     - {match_str: "hostname" , replace_str: "hostname {{hostname}}"} 
     notify: Restart Fluentbit
-    when: ansible_distribution_major_version == '7'
 
   - name: configuring file beat for ol6
     block:
